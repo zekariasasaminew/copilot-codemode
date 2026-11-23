@@ -22,13 +22,16 @@ Every inner call still goes through Copilot's permission rules, hooks and approv
 ### Copilot CLI
 
 ```sh
-copilot plugin install zekariasasaminew/copilot-codemode
+copilot plugin marketplace add zekariasasaminew/copilot-codemode
+copilot plugin install copilot-codemode@copilot-codemode
 copilot plugin list   # copilot-codemode should be listed and enabled
 ```
 
+`copilot plugin install zekariasasaminew/copilot-codemode` also works, but Copilot is deprecating direct installs.
+
 ### GitHub Copilot app
 
-The app runs the same Copilot runtime and reads the same `~/.copilot` folder, so a plugin installed with the CLI command above is available to new app sessions. In the app you can also ask the agent to run that command for you. Start a new session afterwards.
+The app runs the same Copilot runtime and reads the same `~/.copilot` folder, so a plugin installed with the CLI is available to new app sessions. Once the marketplace is added, the plugin also appears under **Customize** in the app sidebar, where you can install or turn it off. Start a new session afterwards.
 
 ### One-time consent
 
