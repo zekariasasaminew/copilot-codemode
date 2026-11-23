@@ -1,0 +1,13 @@
+{
+  "version": 1,
+  "hooks": {
+    "preToolUse": [
+      {
+        "type": "command",
+        "bash": "node \"$COPILOT_HOOK_DIR/audit.mjs\"",
+        "powershell": "node (Join-Path $env:COPILOT_HOOK_DIR 'audit.mjs')",
+        "timeoutSec": 20
+      }
+    ]
+  }
+}
