@@ -1,0 +1,13 @@
+{
+  "name": "copilot-codemode",
+  "owner": { "name": "Zekarias Asaminew" },
+  "metadata": { "description": "Code mode for GitHub Copilot", "version": "0.1.0" },
+  "plugins": [
+    {
+      "name": "copilot-codemode",
+      "description": "The model writes one TypeScript script that calls your MCP tools inside a QuickJS sandbox, instead of one tool call per turn.",
+      "version": "0.1.0",
+      "source": "."
+    }
+  ]
+}
