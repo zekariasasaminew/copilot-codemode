@@ -1,0 +1,25 @@
+{
+  "MODEL": "gemini-4-hydrogen",
+  "REPS": 2,
+  "CONCURRENCY": 3,
+  "SANDBOXED": true,
+  "FLAGS": [
+    "--allow-all-tools",
+    "--deny-url",
+    "github.com",
+    "--deny-url",
+    "api.github.com",
+    "--deny-url",
+    "raw.githubusercontent.com",
+    "--deny-url",
+    "codeload.github.com",
+    "--max-ai-credits",
+    "250"
+  ],
+  "tasks": {
+    "single": "In the GitHub repository cloudflare/agents, who authored pull request #2740, on what date (UTC) was it merged, and how many files did it change?\n\nEnd your reply with one line: ANSWER: {\"author\": string, \"merged_at\": \"YYYY-MM-DD\", \"changed_files\": number}",
+    "reviews": "Consider the pull requests returned by this GitHub search: `repo:cloudflare/agents is:pr is:merged merged:2026-10-27..2026-10-31`. Which of them received at least one APPROVED review, and how many reviews (in any state) were submitted across all of them in total?\n\nEnd your reply with one line: ANSWER: {\"approved\": [PR numbers], \"total_reviews\": number}",
+    "areas": "Consider the pull requests returned by this GitHub search: `repo:cloudflare/agents is:pr is:merged merged:2026-10-27..2026-10-31`. Group the files each PR changed by area: the first two segments of the file path when it has three or more segments, otherwise its first segment (packages/agents/src/x.ts -> packages/agents; .changeset/brave-cats.md -> .changeset; pnpm-lock.yaml -> pnpm-lock.yaml). Which 3 areas were changed by the most PRs? Count each PR at most once per area.\n\nEnd your reply with one line: ANSWER: {\"top\": [{\"area\": string, \"prs\": number}]} (3 entries, most PRs first)",
+    "authors": "How many pull requests were merged in cloudflare/agents during October 2026 (GitHub search: `repo:cloudflare/agents is:pr is:merged merged:2026-10-01..2026-10-31`), and which 3 authors merged the most of them?\n\nEnd your reply with one line: ANSWER: {\"merged\": number, \"top_authors\": [{\"login\": string, \"prs\": number}]} (3 entries, most first)"
+  }
+}
