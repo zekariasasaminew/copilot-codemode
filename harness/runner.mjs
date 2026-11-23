@@ -1,12 +1,12 @@
 // Spawns one headless Copilot CLI run in an isolated COPILOT_HOME and collects what it did:
 // JSONL events, billed usage, wall-clock, tool calls and the final answer.
-import { execFileSync, spawn } from 'node:child_process';
+import { execSync, spawn } from 'node:child_process';
 import { existsSync, readFileSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 
 function findLoader() {
   if (process.env.COPILOT_LOADER) return process.env.COPILOT_LOADER;
-  const root = execFileSync(process.platform === 'win32' ? 'npm.cmd' : 'npm', ['root', '-g'], { encoding: 'utf8', shell: process.platform === 'win32' }).trim();
+  const root = execSync('npm root -g', { encoding: 'utf8' }).trim();
   return path.join(root, '@github', 'copilot', 'npm-loader.js');
 }
 export const LOADER = findLoader();
