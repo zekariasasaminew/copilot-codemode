@@ -9,13 +9,17 @@
   "private": true,
   "scripts": {
     "build": "node scripts/build.mjs",
-    "test": "node test/e2e.mjs"
+    "homes": "node harness/homes.mjs",
+    "test": "node test/e2e.mjs",
+    "bench": "node bench/bench.mjs",
+    "analyze": "node bench/analyze.mjs"
   },
   "engines": {
     "node": ">=22.13"
   },
   "devDependencies": {
     "@jitl/quickjs-singlefile-mjs-release-sync": "^0.32.0",
+    "@modelcontextprotocol/sdk": "^1.32.2",
     "esbuild": "^0.28.2",
     "quickjs-emscripten-core": "^0.32.0"
   }
