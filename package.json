@@ -1,0 +1,22 @@
+{
+  "name": "copilot-codemode",
+  "version": "0.1.0",
+  "description": "Code mode for GitHub Copilot: the model writes one script that calls your tools in a sandbox instead of one tool call per turn.",
+  "type": "module",
+  "license": "MIT",
+  "author": "zekariasasaminew",
+  "repository": "github:zekariasasaminew/copilot-codemode",
+  "private": true,
+  "scripts": {
+    "build": "node scripts/build.mjs",
+    "test": "node test/e2e.mjs"
+  },
+  "engines": {
+    "node": ">=22.13"
+  },
+  "devDependencies": {
+    "@jitl/quickjs-singlefile-mjs-release-sync": "^0.32.0",
+    "esbuild": "^0.28.2",
+    "quickjs-emscripten-core": "^0.32.0"
+  }
+}
