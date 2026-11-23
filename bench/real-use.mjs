@@ -3,18 +3,24 @@
 // plugin enabled and disabled. gh and the network stay available, as they would for a
 // real user, so this measures the plugin against every shortcut the agent can take.
 import { execFileSync } from 'node:child_process';
-import { appendFileSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
+import { appendFileSync, existsSync, mkdirSync, rmSync, writeFileSync } from 'node:fs';
 import path from 'node:path';
 import { fileURLToPath } from 'node:url';
-import { HOMES, WORK } from '../harness/homes.mjs';
+import { HOMES, SANDBOX, WORK } from '../harness/homes.mjs';
 import { LOADER, runCopilot } from '../harness/runner.mjs';
 
 const GH_MCP = fileURLToPath(new URL('../harness/gh-mcp.mjs', import.meta.url));
+// REAL_MCP_ONLY=1 models a service with no CLI shortcut (Jira, Slack, databases): the
+// shell has no network and no gh, so data can only come through MCP.
+const MCP_ONLY = process.env.REAL_MCP_ONLY === '1';
+const PATH_NO_GH = process.env.PATH.split(path.delimiter)
+  .filter((p) => p && !existsSync(path.join(p, 'gh.exe')) && !existsSync(path.join(p, 'gh')))
+  .join(path.delimiter);
 
 const MODEL = process.env.REAL_MODEL ?? 'claude-opus-5.5';
 const REPS = Number(process.env.REAL_REPS ?? 2);
 const SOURCE = process.env.REAL_SOURCE ?? 'zekariasasaminew/copilot-codemode';
-const outDir = path.join(WORK, 'real-use', MODEL);
+const outDir = path.join(WORK, 'real-use', `${MODEL}${MCP_ONLY ? '-mcp-only' : ''}`);
 mkdirSync(outDir, { recursive: true });
 
 const TASKS = {
@@ -28,7 +34,7 @@ function makeHome(name, enabled) {
   const home = path.join(HOMES, name);
   rmSync(home, { recursive: true, force: true });
   mkdirSync(home, { recursive: true });
-  writeFileSync(path.join(home, 'settings.json'), JSON.stringify({ experimental: true }));
+  writeFileSync(path.join(home, 'settings.json'), JSON.stringify({ experimental: true, ...(MCP_ONLY ? { sandbox: SANDBOX } : {}) }));
   writeFileSync(
     path.join(home, 'mcp-config.json'),
     JSON.stringify({ mcpServers: { github: { type: 'local', command: 'node', args: [GH_MCP], tools: ['*'] } } }),
@@ -40,7 +46,8 @@ function makeHome(name, enabled) {
   return home;
 }
 
-const homes = { plugin: makeHome('real-plugin', true), stock: makeHome('real-stock', false) };
+const suffix = MCP_ONLY ? '-mcp' : '';
+const homes = { plugin: makeHome(`real-plugin${suffix}`, true), stock: makeHome(`real-stock${suffix}`, false) };
 const flags = ['--allow-all-tools', '--max-ai-credits', '200'];
 const jobs = [];
 for (let rep = 1; rep <= REPS; rep++) for (const task of Object.keys(TASKS)) for (const arm of rep % 2 ? ['plugin', 'stock'] : ['stock', 'plugin']) jobs.push({ task, arm, rep });
@@ -50,7 +57,7 @@ await Promise.all(
   Array.from({ length: Number(process.env.REAL_CONCURRENCY ?? 2) }, async () => {
     while (next < jobs.length) {
       const { task, arm, rep } = jobs[next++];
-      const run = await runCopilot({ home: homes[arm], cwd: WORK, prompt: TASKS[task], model: MODEL, flags, outPrefix: path.join(outDir, `${task}-${arm}-r${rep}`) });
+      const run = await runCopilot({ home: homes[arm], cwd: WORK, prompt: TASKS[task], model: MODEL, flags, env: MCP_ONLY ? { PATH: PATH_NO_GH } : {}, outPrefix: path.join(outDir, `${task}-${arm}-r${rep}`) });
       const tools = {};
       for (const c of run.toolCalls) tools[c.name] = (tools[c.name] ?? 0) + 1;
       const row = { task, arm, rep, model: MODEL, credits: run.nanoAiu / 1e9, tokens: run.tokens, modelCalls: run.modelCalls, wallMs: run.ms, tools, answer: run.answer.slice(-1500) };

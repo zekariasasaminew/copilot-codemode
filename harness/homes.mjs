@@ -12,7 +12,7 @@ export const WORK = path.join(ROOT, 'work');
 export const HOMES = path.join(ROOT, 'homes');
 const EXT = path.join(ROOT, 'extensions', 'codemode');
 
-const SANDBOX = {
+export const SANDBOX = {
   enabled: true,
   userPolicy: { network: { allowOutbound: false, allowLocalNetwork: true } },
   sandboxMcpServers: false,
