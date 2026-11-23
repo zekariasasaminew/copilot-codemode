@@ -1,0 +1,11 @@
+{
+  "name": "copilot-codemode",
+  "description": "Code mode for GitHub Copilot: the model writes one TypeScript script that calls your MCP tools inside a QuickJS sandbox, instead of one tool call per turn.",
+  "version": "0.1.0",
+  "author": { "name": "Zekarias Asaminew", "url": "https://github.com/zekariasasaminew" },
+  "repository": "https://github.com/zekariasasaminew/copilot-codemode",
+  "license": "MIT",
+  "keywords": ["code-mode", "mcp", "tokens", "sandbox", "quickjs"],
+  "extensions": "extensions",
+  "skills": "skills"
+}
