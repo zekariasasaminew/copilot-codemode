@@ -37,15 +37,16 @@ Median AI credits per run (1 credit = $0.01), classic → code mode. Two reps pe
 | Gemini 4 Hydrogen | 3.3 → 5.2 | 9.8 → 4.8 (−50%) | 21.3 → 3.2 (−85%) | 6.3 → 2.8 (−55%) | 49s → 27s | 8/8 | 8/8 |
 | Gemini 3.8 Flash | 1.1 → 1.6 | 10.1 → 5.7 (−44%) | 21.3 → 5.6 (−73%) | 3.4 → 3.2 (−4%) | 111s → 64s | 8/8 | 8/8 |
 | Copilot Fusion (standard) | 1.4 → 1.5 | 0.4 → 0.4 (−12%) | 8.4 → 2.0 (−76%) | 2.4 → 1.6 (−33%) | 33s → 31s | 8/8 | 8/8 |
+| Auto (intelligence) | 0.1 → 0.1 | 0.4 → 0.3 (−41%) | 1.0 → 0.2 (−76%) | 0.3 → 1.2 | 55s → 29s | 5/8 | 7/8 |
 
-Overall, code mode answered **108/108** correctly and classic **102/108**. Every classic miss was a count done in the model's head. The heaviest task, `areas`, fell **66–91%** on every model.
+Overall, code mode answered **115/116** correctly and classic **107/116**. Every classic miss was a count done in the model's head. The heaviest task, `areas`, fell **66–91%** on every model.
 
 Notes:
 
 - Single lookups vary up to 2× between runs because of prompt-cache timing, in both arms. The model calls the tool directly there, so read those cells as "no difference".
 - Sonnet, Haiku and GPT-6.2 Sol ran in an earlier round that blocked GitHub URLs by command text instead of the OS sandbox. Runs where the shell still reached the network (`curl.exe`, Python) are excluded.
-- Fusion routed these tasks to GPT-6 Luna and GPT-6.1 Terra. It is cheap enough that the reviews task costs under half a credit either way.
-- Fusion Max needs GPT-6 Astra, which the test account did not have, and Auto mode rejects `--reasoning-effort`.
+- Fusion routed these tasks to GPT-6 Luna and GPT-6.1 Terra, and Auto (intelligence) mostly to GPT-6 Luna. Both are cheap enough that most tasks cost under a credit either way. One Auto code-mode `authors` run skipped `run_code` and hit a cold cache.
+- Fusion Max needs GPT-6 Astra, which the test account did not have, and Auto mode rejects `--reasoning-effort`, so Auto's `intelligence` tier stands in as the high tier.
 
 ## Real use
 

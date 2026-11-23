@@ -6,7 +6,7 @@ Cloudflare ([Code Mode](https://blog.cloudflare.com/code-mode/)) and Anthropic (
 
 ## Results
 
-On fan-out questions over the GitHub MCP server (one search, then a tool call per result; graded against ground truth, shell network blocked so data only comes through MCP), 13 model configurations were tested. Code mode answered **108/108** correctly against classic's 102/108. The heaviest task cost **66–91% less on every model**, and fan-out questions finished up to 4× faster.
+On fan-out questions over the GitHub MCP server (one search, then a tool call per result; graded against ground truth, shell network blocked so data only comes through MCP), 14 model configurations were tested. Code mode answered **115/116** correctly against classic's 107/116. The heaviest task cost **66–91% less on every model**, and fan-out questions finished up to 4× faster.
 
 | Model | reviews | areas | authors | fan-out time |
 |---|---|---|---|---|
