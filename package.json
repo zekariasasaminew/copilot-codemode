@@ -1,6 +1,6 @@
 {
   "name": "copilot-codemode",
-  "version": "0.2.0",
+  "version": "0.2.1",
   "description": "Code mode for GitHub Copilot: the model writes one script that calls your tools in a sandbox instead of one tool call per turn.",
   "type": "module",
   "license": "MIT",
