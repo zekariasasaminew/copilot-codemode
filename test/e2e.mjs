@@ -172,6 +172,25 @@ const TESTS = [
       return [l?.ok && (l.returned.match(/"n":\d+/g) ?? []).length === 3, l?.returned];
     },
   },
+  {
+    name: 'guide-picks-run-code-unprompted',
+    flags: ALLOW_ALL,
+    prompt: 'Using the probe server, look up items 1 through 12 with get_item and tell me which owner has the most total history entries and the total points per owner.',
+    check: ({ ledger, guide, run }) => {
+      const direct = run.toolCalls.filter((c) => /get_item/.test(c.name)).length;
+      // One direct call to sample an unlearned return shape is fine; the fan-out must be in run_code.
+      return [guide.some((g) => g.event === 'intro') && ledger.some((l) => l.calls >= 10) && direct <= 1 && !guide.some((g) => g.event === 'nudge'), { tools: run.toolCalls.map((c) => c.name), guide }];
+    },
+  },
+  {
+    name: 'guide-nudges-direct-fanout',
+    flags: ALLOW_ALL,
+    prompt: 'Without using run_code, call probe get_item directly for ids 1, 2, 3, 4 and 5, one call each, then report the five owners.',
+    check: ({ guide, run }) => {
+      const nudges = guide.filter((g) => g.event === 'nudge');
+      return [nudges.length === 1 && /get_item/.test(nudges[0].what), { tools: run.toolCalls.map((c) => c.name), guide }];
+    },
+  },
 ];
 
 const only = process.argv[2] ? new Set(process.argv[2].split(',')) : null;
@@ -197,7 +216,9 @@ for (const t of TESTS.filter((x) => !only || only.has(x.name))) {
   let pass = false;
   let detail;
   try {
-    [pass, detail] = t.check({ ledger: readLedger(dataDir), run });
+    const guideFile = path.join(dataDir, 'guide.jsonl');
+    const guide = existsSync(guideFile) ? readFileSync(guideFile, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)) : [];
+    [pass, detail] = t.check({ ledger: readLedger(dataDir), guide, run });
   } catch (err) {
     detail = `check threw: ${err.message}`;
   }

@@ -10,7 +10,6 @@ const here = path.dirname(fileURLToPath(import.meta.url));
 export const ROOT = path.resolve(here, '..');
 export const WORK = path.join(ROOT, 'work');
 export const HOMES = path.join(ROOT, 'homes');
-const EXT = path.join(ROOT, 'extensions', 'codemode');
 
 export const SANDBOX = {
   enabled: true,
@@ -40,7 +39,9 @@ function makeHome(name, { extension, sandbox }) {
   writeFileSync(path.join(home, 'mcp-config.json'), JSON.stringify({ mcpServers: servers }, null, 2));
   if (extension) {
     mkdirSync(path.join(home, 'extensions'), { recursive: true });
-    symlinkSync(EXT, path.join(home, 'extensions', 'codemode'), process.platform === 'win32' ? 'junction' : 'dir');
+    for (const ext of ['codemode', 'codemode-guide']) {
+      symlinkSync(path.join(ROOT, 'extensions', ext), path.join(home, 'extensions', ext), process.platform === 'win32' ? 'junction' : 'dir');
+    }
   }
   return home;
 }
