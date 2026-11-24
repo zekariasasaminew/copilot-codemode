@@ -32,3 +32,9 @@ console.log(`tool output     ${kept.toLocaleString()} chars (~${tokens(kept)} to
 console.log(`sent to model   ${returned.toLocaleString()} chars (~${tokens(returned)} tokens)`);
 console.log(`sandbox kept    ~${tokens(Math.max(kept - returned, 0))} tokens of tool output out of context (upper bound)`);
 console.log(`round trips     ~${Math.max(sum('calls') - runs.length, 0)} model turns avoided`);
+
+const guideFile = path.join(dir, 'guide.jsonl');
+if (existsSync(guideFile)) {
+  const events = readFileSync(guideFile, 'utf8').split(/\r?\n/).filter(Boolean).map((l) => JSON.parse(l)).filter((e) => !since || e.at >= since);
+  console.log(`guide           ${events.filter((e) => e.event === 'intro').length} session notes, ${events.filter((e) => e.event === 'nudge').length} fan-out hints`);
+}
