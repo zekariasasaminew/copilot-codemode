@@ -183,6 +183,12 @@ const TESTS = [
     },
   },
   {
+    name: 'guide-ignores-calls-inside-run-code',
+    flags: ALLOW_ALL,
+    prompt: exact('const owners = [];\nfor (const id of [1, 2, 3, 4, 5, 6]) owners.push((await probe.get_item({ id })).owner);\nreturn owners;'),
+    check: ({ ledger, guide }) => [ledger.some((l) => l.calls === 6) && !guide.some((g) => g.event === 'nudge'), { guide, calls: last(ledger)?.calls }],
+  },
+  {
     name: 'guide-nudges-direct-fanout',
     flags: ALLOW_ALL,
     prompt: 'Without using run_code, call probe get_item directly for ids 1, 2, 3, 4 and 5, one call each, then report the five owners.',
