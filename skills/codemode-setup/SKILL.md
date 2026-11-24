@@ -80,6 +80,12 @@ Environment variables read when the extension starts:
 | `CODEMODE_WALL_MS` | `180000` | Wall-clock limit per run |
 | `CODEMODE_MAX_CALLS` | `300` | Tool calls allowed per run |
 | `CODEMODE_RETURN_CHARS` | `24000` | Result size before truncation (the full value stays in `$last`) |
+| `CODEMODE_GUIDE` | on | `off` stops the guide from adding run_code hints |
+| `CODEMODE_NUDGE_SAME` / `CODEMODE_NUDGE_ANY` | `3` / `4` | Direct calls to one MCP tool, or to any MCP tools, in one turn before the guide suggests run_code |
+
+## The guide
+
+The plugin also ships a small `codemode-guide` extension. It adds one short note about run_code to the first prompt of a session. If the model then starts calling MCP tools one by one in a turn, it adds a one-time hint to batch the rest in run_code. It only adds context: it never blocks or changes a call, and it ignores calls made from inside run_code. Hints are logged to `~/.copilot/codemode/guide.jsonl`.
 
 ## Troubleshoot
 

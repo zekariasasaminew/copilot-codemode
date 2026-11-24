@@ -45,6 +45,7 @@ Requires Copilot CLI 1.0.100 or newer. Nothing to `npm install`: QuickJS is bund
 - Each inner call goes back through `session.rpc.tools.execute`, which is Copilot's own tool pipeline. Deny rules, `preToolUse` hooks, approval prompts and MCP credentials apply to every call exactly as if the model had made it.
 - Large results that Copilot spills to temp files are read back, so the script sees the full data. The model sees only what the script returns, capped at 24K characters. `state` and `$last` carry values between runs.
 - Every run is appended to `~/.copilot/codemode/ledger.jsonl`. `scripts/savings.mjs` summarizes it.
+- A second, tiny extension (`codemode-guide`) helps the model pick code mode in busy setups with many tools and skills. It adds one short note about `run_code` at the start of a session, and a one-time hint when the model starts calling the same MCP tool over and over. It only adds context and never blocks a call. Set `CODEMODE_GUIDE=off` to disable it.
 
 ## Security
 
