@@ -78,3 +78,12 @@ REAL_MCP_ONLY=1 node bench/real-use.mjs
 ```
 
 Raw rows for every run are in [bench/results](../bench/results).
+
+## In a busy real setup (0.2.x)
+
+Tested in a real `~/.copilot` with 8 MCP servers (226 tools), many skills and custom instructions, using fresh sessions that knew nothing about code mode. Claude Opus 5.5.
+
+- **Without the guide (0.1.0):** the model never chose `run_code` unprompted. It used CLIs, skills or direct MCP calls.
+- **With the guide (0.2.x):** asked to survey a 64-app MCP catalog (list, then details and data sources per app), a fresh session used `search_functions` and then `run_code` from the start. It made about 200 inner calls across 5 scripts; 1.24M characters of tool output stayed in the sandbox and 27K reached the model.
+- Same question headless: **plugin 49 credits, 80 s, full answer**. **Stock 280+ credits and 382 s, unfinished**: it was cut off by a network outage while still fanning out 116 MCP calls through sub-agents. So stock's numbers are a lower bound.
+- Where a CLI or skill already answers in one or two calls (`gh`, a Jira CLI), the model still picks that, which is the right choice.
