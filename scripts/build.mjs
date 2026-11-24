@@ -1,9 +1,7 @@
-// Bundles the extension and its QuickJS WASM into one file, so the plugin needs no npm install.
+// Bundles each extension (and QuickJS WASM) into a single file, so the plugin needs no npm install.
 import { build } from 'esbuild';
 
-await build({
-  entryPoints: ['src/extension.mjs'],
-  outfile: 'extensions/codemode/extension.mjs',
+const common = {
   bundle: true,
   platform: 'node',
   format: 'esm',
@@ -12,4 +10,7 @@ await build({
   banner: { js: "import { createRequire as __cr } from 'node:module'; const require = __cr(import.meta.url);" },
   legalComments: 'none',
   logLevel: 'info',
-});
+};
+
+await build({ ...common, entryPoints: ['src/extension.mjs'], outfile: 'extensions/codemode/extension.mjs' });
+await build({ ...common, entryPoints: ['src/guide.mjs'], outfile: 'extensions/codemode-guide/extension.mjs' });
