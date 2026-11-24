@@ -28,7 +28,6 @@ const INTRO =
 let session;
 let mcpNames = null;
 let introduced = false;
-let inRunCode = 0;
 const turns = new Map();
 
 async function isMcp(name) {
@@ -58,11 +57,8 @@ const hooks = {
     return { additionalContext: INTRO };
   },
   onPreToolUse: async (input) => {
-    if (input.toolName === 'run_code') {
-      inRunCode++;
-      return;
-    }
-    if (OFF || inRunCode > 0) return;
+    // Calls made from inside run_code arrive with a synthetic "direct-<tool>" call id.
+    if (OFF || String(input.toolCallId ?? '').startsWith('direct-')) return;
     const fn = await isMcp(input.toolName);
     if (!fn) return;
     const turn = turnOf(input);
@@ -78,12 +74,6 @@ const hooks = {
         `This is turning into a fan-out (${what} so far). Do the remaining calls in one run_code script instead: ` +
         `call search_functions for the exact signature, fetch the rest with Promise.all, aggregate in code, and return only the answer.`,
     };
-  },
-  onPostToolUse: async (input) => {
-    if (input.toolName === 'run_code' && inRunCode > 0) inRunCode--;
-  },
-  onPostToolUseFailure: async (input) => {
-    if (input.toolName === 'run_code' && inRunCode > 0) inRunCode--;
   },
 };
 

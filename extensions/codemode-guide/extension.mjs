@@ -21,7 +21,6 @@ var INTRO = "Code mode is available. When answering needs several MCP tool calls
 var session;
 var mcpNames = null;
 var introduced = false;
-var inRunCode = 0;
 var turns = /* @__PURE__ */ new Map();
 async function isMcp(name) {
   if (!mcpNames || !mcpNames.has(name)) {
@@ -48,11 +47,7 @@ var hooks = {
     return { additionalContext: INTRO };
   },
   onPreToolUse: async (input) => {
-    if (input.toolName === "run_code") {
-      inRunCode++;
-      return;
-    }
-    if (OFF || inRunCode > 0) return;
+    if (OFF || String(input.toolCallId ?? "").startsWith("direct-")) return;
     const fn = await isMcp(input.toolName);
     if (!fn) return;
     const turn = turnOf(input);
@@ -66,12 +61,6 @@ var hooks = {
     return {
       additionalContext: `This is turning into a fan-out (${what} so far). Do the remaining calls in one run_code script instead: call search_functions for the exact signature, fetch the rest with Promise.all, aggregate in code, and return only the answer.`
     };
-  },
-  onPostToolUse: async (input) => {
-    if (input.toolName === "run_code" && inRunCode > 0) inRunCode--;
-  },
-  onPostToolUseFailure: async (input) => {
-    if (input.toolName === "run_code" && inRunCode > 0) inRunCode--;
   }
 };
 session = await sdk.joinSession({ hooks });
