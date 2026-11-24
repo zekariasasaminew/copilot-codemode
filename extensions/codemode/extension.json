@@ -4,27 +4,40 @@
   "tools": [
     {
       "name": "run_code",
-      "description": "Run a TypeScript/JavaScript snippet that calls your tools as async functions inside an isolated sandbox (no network, files, imports or Node APIs). Write the body of an async function and `return` the result. Call tools as `await <server>.<tool>(input)`, for example `await github.list_pull_requests({ owner, repo, state: 'open' })`; allowed built-in tools are under `builtin` (e.g. `builtin.view`). Results are parsed JSON when possible; failed or denied calls throw. Use Promise.all for independent calls, filter and aggregate in code, and return only what the answer needs: do all counting, summing, sorting and ranking inside the code and return the final numbers rather than adding up rows yourself. Results over ~6K tokens are truncated (the full value stays in `$last`). `state` is an object that persists between runs. Call search_functions first for exact signatures and return shapes. Use this when a task needs 3+ tool calls, loops over results, or pulls bulk data you only need part of. For a single small lookup, call the tool directly.",
+      "description": "Preferred way to use MCP tools when a request needs more than two tool calls: per-item fetches, pagination, joining data across servers, or counting, grouping, ranking or filtering results. Write one TypeScript/JavaScript snippet (the body of an async function) that calls your tools as async functions inside an isolated sandbox (no network, files, imports or Node APIs), and `return` only what the answer needs. Call tools as `await <server>.<tool>(input)`, for example `await github.list_pull_requests({ owner, repo, state: 'open' })`; allowed built-in tools are under `builtin` (e.g. `builtin.view`). Results are parsed JSON when possible; failed or denied calls throw. Use Promise.all for independent calls and do all counting, summing, sorting and ranking inside the code rather than in your head. One run_code call replaces many tool calls, keeps bulk data out of your context, and is cheaper, faster and more accurate. Results over ~6K tokens are truncated (the full value stays in ``); `state` persists between runs. Call search_functions first for exact signatures and return shapes. For a single small lookup, call the tool directly.",
       "parameters": {
         "type": "object",
         "properties": {
-          "code": { "type": "string", "description": "Body of an async function. Use `return` for the result." }
+          "code": {
+            "type": "string",
+            "description": "Body of an async function. Use `return` for the result."
+          }
         },
-        "required": ["code"]
+        "required": [
+          "code"
+        ]
       },
       "defer": "never",
       "skipPermission": true
     },
     {
       "name": "search_functions",
-      "description": "Find functions callable from run_code. Returns TypeScript signatures with parameter docs and, once learned, the shape of what each returns. Query by intent, e.g. \"list pull requests\" or \"review comments\".",
+      "description": "Find functions callable from run_code: returns TypeScript signatures with parameter docs and, once learned, return shapes. Use it before run_code whenever a task needs several MCP calls. Query by intent, e.g. \"list pull requests\" or \"jira issue comments\".",
       "parameters": {
         "type": "object",
         "properties": {
-          "query": { "type": "string", "description": "What you want to do" },
-          "limit": { "type": "integer", "description": "Maximum functions to return (default 6)" }
+          "query": {
+            "type": "string",
+            "description": "What you want to do"
+          },
+          "limit": {
+            "type": "integer",
+            "description": "Maximum functions to return (default 6)"
+          }
         },
-        "required": ["query"]
+        "required": [
+          "query"
+        ]
       },
       "defer": "never",
       "skipPermission": true
